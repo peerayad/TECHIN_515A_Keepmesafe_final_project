@@ -1,7 +1,5 @@
 # Budget
 
-![Budget table](budget.png)
-
 ## Itemized Cost
 
 | Item | Price (USD) |
