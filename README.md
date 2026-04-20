@@ -83,7 +83,65 @@ Planned milestones for the quarter (align with your course calendar as needed).
 | **10** | Demo rehearsal; final report; repo and handoff documentation |
 
 ---
-
-## Repository status
-
-This repository holds the **KeepMeSafe** course final project. Firmware, models, and hardware notes will be added here as the build progresses.
+# KeepMeSafe — Sensor Test Guide
+ 
+## Prerequisites
+- XIAO ESP32-S3 Sense connected via USB
+- PlatformIO installed in VS Code
+- Python 3 installed
+---
+ 
+## Test 1: Microphone
+ 
+1. Replace `src/main.cpp` with the mic test code
+2. Click **Upload** in PlatformIO
+3. Open **Serial Monitor** at `921600` baud
+4. Speak or clap near the device
+Expected output:
+```
+Level: [###-------------------------------------] 2400
+Level: [########################################] 28000
+```
+ 
+> If all zeros → check mic pins (CLK: GPIO42, DATA: GPIO41)
+ 
+---
+ 
+## Test 2: Capture Photo
+ 
+1. Restore `src/main.cpp` to the main firmware and click **Upload**
+2. Open a terminal and run:
+```bash
+python receive_photos.py
+```
+3. Make a loud sound near the mic (scream or knock)
+4. Wait for threat confirmation (2 consecutive hits above 80%)
+5. Check the `photos/` folder for the saved image
+Expected output:
+```
+✅ Connected to /dev/cu.usbmodem1101
+📸 Saving photo_1.jpg...
+✅ Photo saved!
+```
+ 
+---
+ 
+## Thresholds (tunable in `main.cpp`)
+ 
+| Parameter | Default | Description |
+|---|---|---|
+| `NOISE_GATE` | 3000 | Min amplitude to run ML |
+| `THREAT_THRESHOLD` | 0.80 | Confidence to count as threat |
+| `THREAT_CONFIRM_COUNT` | 2 | Consecutive hits before trigger |
+ 
+---
+ 
+## Troubleshooting
+ 
+| Problem | Fix |
+|---|---|
+| Serial Monitor shows all zeros | Check baud rate is `921600` |
+| `receive_photos.py` can't connect | Close Serial Monitor first |
+| No photo saved | Make louder sound or lower `NOISE_GATE` to `2000` |
+| Camera FAILED on boot | Re-upload firmware and check USB cable |
+ 
